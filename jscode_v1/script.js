@@ -59,20 +59,41 @@ function downloadCSV() {
 
 function displayAccounts() {
     const accounts = getAccounts();
-    const accountsList = document.getElementById('accountsList');
-    accountsList.innerHTML = '';
+    const tableBody = document.getElementById('accountsTable').getElementsByTagName('tbody')[0];
+    tableBody.innerHTML = '';  // 清空现有的表格内容
+
     accounts.forEach((account, index) => {
-        const accountDiv = document.createElement('div');
-        accountDiv.className = 'account';
-        accountDiv.innerHTML = `
-            设备ID: ${account.deviceId}, 用户ID: ${account.osUserId}, 应用ID: ${account.appId}
-            <button onclick="copyToClipboard(${index})">复制</button>
+        const row = tableBody.insertRow();
+        row.insertCell(0).innerText = account.deviceId;
+        row.insertCell(1).innerText = account.osUserId;
+        row.insertCell(2).innerText = account.appId;
+
+        const actionsCell = row.insertCell(3);
+        actionsCell.innerHTML = `
+            <button onclick="copyOsPassword(${index})">复制操作系统密码</button>
+            <button onclick="copyAppPassword(${index})">复制应用密码</button>
             <button onclick="deleteAccount(${index})">删除</button>
             <button onclick="editAccount(${index})">修改</button>
         `;
-        accountsList.appendChild(accountDiv);
     });
 }
+
+
+function copyOsPassword(index) {
+    const osPassword = getAccounts()[index].osPassword;
+    navigator.clipboard.writeText(osPassword).then(() => {
+        alert('操作系统密码已复制到剪贴板');
+    });
+}
+
+function copyAppPassword(index) {
+    const appPassword = getAccounts()[index].appPassword;
+    navigator.clipboard.writeText(appPassword).then(() => {
+        alert('应用密码已复制到剪贴板');
+    });
+}
+
+
 
 function deleteAccount(index) {
     let accounts = getAccounts();

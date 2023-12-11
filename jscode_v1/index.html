@@ -3,12 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <title>账户管理工具</title>
-    <style>
-        body { font-family: Arial, sans-serif; }
-        .container { width: 80%; margin: auto; }
-        input, button { margin: 5px 0; }
-        .account { margin-bottom: 10px; }
-    </style>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <div class="container">
@@ -36,6 +31,19 @@
             <br>
             <div id="accountsList">
                 <!-- 账户列表将在这里显示 -->
+                <table id="accountsTable">
+                    <thead>
+                        <tr>
+                            <th>设备ID</th>
+                            <th>操作系统用户ID</th>
+                            <th>应用ID</th>
+                            <th colspan="4">操作</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- 账户列表将在这里动态生成 -->
+                    </tbody>
+                </table>
             </div>
 
             <h3>下载数据</h3>
