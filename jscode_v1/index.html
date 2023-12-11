@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>账户管理工具</title>
+    <style>
+        body { font-family: Arial, sans-serif; }
+        .container { width: 80%; margin: auto; }
+        input, button { margin: 5px 0; }
+        .account { margin-bottom: 10px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>账户管理工具</h2>
+
+        <div id="loginSection">
+            <input type="password" id="masterPassword" placeholder="请输入访问密码">
+            <button onclick="unlock()">解锁</button>
+        </div>
+
+        <div id="mainSection" style="display:none;">
+            <div>
+    
+                <hr>
+                <br>
+                <br>
+                <input type="text" id="deviceId" placeholder="设备ID">
+                <input type="text" id="osUserId" placeholder="操作系统用户ID">
+                <input type="password" id="osPassword" placeholder="操作系统密码">
+                <input type="text" id="appId" placeholder="应用ID">
+                <input type="password" id="appPassword" placeholder="应用密码">
+                <button onclick="addAccount()">添加账户</button>
+            </div>
+            <br>
+            <br>
+            <div id="accountsList">
+                <!-- 账户列表将在这里显示 -->
+            </div>
+
+            <h3>下载数据</h3>
+            <br>
+            <h4>JSON格式</h4>
+            <button onclick="downloadData()">下载数据</button>
+            <input type="file" onchange="uploadData(event)">
+            <br>
+            <h4>CSV格式</h4>
+            <button onclick="downloadCSV()">下载CSV</button>
+            <input type="file" onchange="uploadCSV(event)">
+
+            <br>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
