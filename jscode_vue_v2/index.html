@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Vue 3 Table Demo</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://unpkg.com/vue@next"></script>
+    <script src="https://unpkg.com/papaparse@5.3.0"></script>
+    <script defer src="script.js"></script>
+</head>
+<body>
+    <div id="app">
+        <h1>设备管理表格</h1>
+        <button @click="exportToJson">导出JSON</button>
+        <button @click="exportToCsv">导出CSV</button>
+        <input type="file" @change="importFile($event)" accept=".json,.csv" />
+
+        <table border="1">
+            <tr>
+                <th>设备ID</th>
+                <th>Name</th>
+                <th>Tag</th>
+                <th>Application ID</th>
+                <th>域账号/DS</th>
+                <th>应用ID</th>
+                <th>应用密码</th>
+                <th>操作</th>
+            </tr>
+            <tr v-for="(record, index) in sortedTableData" :key="index">
+                <td>{{ record.deviceId }}</td>
+                <td>{{ record.systemName }}</td>
+                <td>{{ record.tagName }}</td>
+                <td>{{ record.applicationId }}</td>
+                <td>{{ record.domainAccount }}</td>
+                <td>{{ record.appId }}</td>
+                <td>{{ record.appPassword }}</td>
+                <td>
+                    <button @click="editRecord(record, index)">编辑</button>
+                    <button @click="deleteRecord(index)">删除</button>
+                    <button @click="copyToClipboard(record.appPassword, index)" :class="{ copied: copiedIndex === index }">复制密码</button>
+                    <span v-if="copiedIndex === index" class="copied-message">已复制!</span>
+                </td>
+            </tr>
+        </table>
+
+        <div v-if="isEditing" class="modal">
+            <h3>编辑记录</h3>
+            <form @submit.prevent="updateRecord(currentIndex)">
+                <input v-model="currentRecord.deviceId" placeholder="设备ID" />
+                <input v-model="currentRecord.systemName" placeholder="System Name" />
+                <input v-model="currentRecord.tagName" placeholder="Tag/Computer Name" />
+                <input v-model="currentRecord.applicationId" placeholder="Application ID" />
+                <input v-model="currentRecord.domainAccount" placeholder="域账号/DS" />
+                <input v-model="currentRecord.appId" placeholder="应用ID" />
+                <input v-model="currentRecord.appPassword" placeholder="应用密码" />
+                <button type="submit">更新</button>
+                <button @click="cancelEdit">取消</button>
+            </form>
+        </div>
+
+        <h3>添加新记录</h3>
+        <form @submit.prevent="addRecord">
+            <input v-model="newRecord.deviceId" placeholder="设备ID" />
+            <input v-model="newRecord.systemName" placeholder="System Name" />
+            <input v-model="newRecord.tagName" placeholder="Tag/Computer Name" />
+            <input v-model="newRecord.applicationId" placeholder="Application ID" />
+            <input v-model="newRecord.domainAccount" placeholder="域账号/DS" />
+            <input v-model="newRecord.appId" placeholder="应用ID" />
+            <input v-model="newRecord.appPassword" placeholder="应用密码" />
+            <button type="submit">添加</button>
+        </form>
+
+        <br><br><br><br><br>
+
+        <!-- 清除本地存储的按钮 -->
+<div class="clear-storage">
+    <button @click="clearLocalStorage">清除本地存储</button>
+</div>
+    </div>
+</body>
+</html>

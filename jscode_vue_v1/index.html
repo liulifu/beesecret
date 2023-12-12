@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Vue 3 Table Demo</title>
+    <script src="https://unpkg.com/vue@next"></script>
+    <script src="https://unpkg.com/papaparse@5.3.0"></script>
+</head>
+<body>
+    <div id="app">
+        <h1>设备管理表格</h1>
+        <button @click="exportToJson">导出JSON</button>
+        <button @click="exportToCsv">导出CSV</button>
+        <input type="file" @change="importFile($event)" accept=".json,.csv" />
+        <table border="1">
+            <tr>
+                <th>设备ID</th>
+                <th>System Name</th>
+                <th>Tag/Computer Name</th>
+                <th>Application ID</th>
+                <th>域账号/DS</th>
+                <th>应用ID</th>
+                <th>应用密码</th>
+                <th>操作</th>
+            </tr>
+            <tr v-for="(record, index) in tableData" :key="index">
+                <td>{{ record.deviceId }}</td>
+                <td>{{ record.systemName }}</td>
+                <td>{{ record.tagName }}</td>
+                <td>{{ record.applicationId }}</td>
+                <td>{{ record.domainAccount }}</td>
+                <td>{{ record.appId }}</td>
+                <td>{{ record.appPassword }}</td>
+                <td>
+                    <button @click="deleteRecord(index)">删除</button>
+                </td>
+            </tr>
+        </table>
+        <h3>添加新记录</h3>
+        <form @submit.prevent="addRecord">
+            <input v-model="newRecord.deviceId" placeholder="设备ID" />
+            <input v-model="newRecord.systemName" placeholder="System Name" />
+            <input v-model="newRecord.tagName" placeholder="Tag/Computer Name" />
+            <input v-model="newRecord.applicationId" placeholder="Application ID" />
+            <input v-model="newRecord.domainAccount" placeholder="域账号/DS" />
+            <input v-model="newRecord.appId" placeholder="应用ID" />
+            <input v-model="newRecord.appPassword" placeholder="应用密码" />
+            <button type="submit">添加</button>
+        </form>
+    </div>
+
+    <script>
+        const { createApp, reactive, ref } = Vue;
+
+        createApp({
+            setup() {
+                const tableData = reactive([]);
+                const newRecord = ref({
+                    deviceId: '',
+                    systemName: '',
+                    tagName: '',
+                    applicationId: '',
+                    domainAccount: '',
+                    appId: '',
+                    appPassword: ''
+                });
+
+                function addRecord() {
+                    tableData.push({ ...newRecord.value });
+                    Object.keys(newRecord.value).forEach(key => newRecord.value[key] = '');
+                }
+
+                function deleteRecord(index) {
+                    tableData.splice(index, 1);
+                }
+
+                function exportToJson() {
+                    const jsonStr = JSON.stringify(tableData);
+                    downloadFile(jsonStr, "data.json", "text/json");
+                }
+
+                function exportToCsv() {
+                    const csv = Papa.unparse(tableData);
+                    downloadFile(csv, "data.csv", "text/csv");
+                }
+
+                function importFile(event) {
+                    const file = event.target.files[0];
+                    if (file.type === "application/json") {
+                        const reader = new FileReader();
+                        reader.onload = (e) => {
+                            const data = JSON.parse(e.target.result);
+                            tableData.splice(0, tableData.length, ...data);
+                        };
+                        reader.readAsText(file);
+                    } else if (file.type === "text/csv") {
+                        Papa.parse(file, {
+                            complete: (result) => {
+                                tableData.splice(0, tableData.length, ...result.data);
+                            },
+                            header: true
+                        });
+                    }
+                }
+
+                function downloadFile(content, fileName, contentType) {
+                    const a = document.createElement("a");
+                    const file = new Blob([content], { type: contentType });
+                    a.href = URL.createObjectURL(file);
+                    a.download = fileName;
+                    a.click();
+                }
+
+                return {
+                    tableData, newRecord, addRecord, deleteRecord,
+                    exportToJson, exportToCsv, importFile
+                };
+            }
+        }).mount('#app');
+    </script>
+</body>
+</html>
